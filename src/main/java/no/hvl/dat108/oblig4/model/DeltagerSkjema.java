@@ -1,5 +1,6 @@
 package no.hvl.dat108.oblig4.model;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -30,22 +31,30 @@ public class DeltagerSkjema {
     public static final String ONE_TO_19_TIMES = "{1,19}";
     public static final String EIGHT_TIMES = "{8}";
 
-    //TODO - Annotér med valideringsregler /-krav
+    @NotNull(message = "Fornavn må oppgis")
+	@Pattern(regexp = STRING_START + A_CAPITAL_LETTER + A_LETTER_SPACE_OR_HYPHEN + ONE_TO_19_TIMES + STRING_END,
+			message = "Fornavn må være mellom 2-20 tegn og starte med stor bokstav")
 	private String fornavn;
 
-    //TODO - Annotér med valideringsregler /-krav
+    @NotNull(message = "Etternavn må oppgis")
+	@Pattern(regexp = STRING_START + A_CAPITAL_LETTER + A_LETTER_OR_HYPHEN + ONE_TO_19_TIMES + STRING_END,
+			message = "Etternavnet må være mellom 2-20 tegn og starte med stor bokstav")
 	private String etternavn;
 
-    //TODO - Annotér med valideringsregler /-krav
+    @NotNull(message = "Mobilnummer må oppgis")
+	@Pattern(regexp = STRING_START + A_DIGIT + EIGHT_TIMES + STRING_END,
+			message = "Mobilnummeret må være nøyaktig 8 tall")
 	private String mobil;
 
-    //TODO - Annotér med valideringsregler /-krav
+	@NotNull(message = "Passord må oppgis")
+	@Size(min = 12,message = "Passordet må inneholde minst 12 tegn")
 	private String passord;
     
     //Denne valideres programmatisk i PaameldingController
 	private String passordRepetert;
 
-    //TODO - Annotér med valideringsregler /-krav
+    @NotNull(message = "Velg kjønn")
+	@Pattern(regexp = "^(mann|kvinne)$", message = "Kjønn må være enten mann elleR kvinne")
 	private String kjonn;
 	
 	//---

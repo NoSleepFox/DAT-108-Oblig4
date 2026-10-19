@@ -20,8 +20,10 @@ public class DeltagerDbService {
      */
     public static Deltager finnDeltagerMedMobil(String mobil) {
 
-        //TODO - Skriv denne metoden. Bruk streams!
-        return null;
+        return deltagerliste.stream()
+                .filter(d -> d.getMobil().equals(mobil))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -39,8 +41,7 @@ public class DeltagerDbService {
      */
     public static boolean erDeltagerPaameldt(String mobil) {
 
-        //TODO - Skriv denne metoden.
-        return false;
+        return finnDeltagerMedMobil(mobil) !=null;
     }
 
     /**
