@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import no.hvl.dat108.oblig4.model.Deltager;
 
+import java.net.http.HttpRequest;
+
 
 public class LogginnService {
 
@@ -14,8 +16,9 @@ public class LogginnService {
      */
     public static boolean erBrukerLoggetInn(HttpServletRequest request) {
 
-        //TODO - Skriv denne metoden.
-        return false;
+        HttpSession sesjon = request.getSession(false);
+        return sesjon != null && sesjon.getAttribute("innloggetBruker") !=null;
+
     }
 
     /**
@@ -23,8 +26,10 @@ public class LogginnService {
      * @param request
      */
     public static void loggUtBruker(HttpServletRequest request) {
-
-        //TODO - Skriv denne metoden.
+        HttpSession sesjon = request.getSession(false);
+        if(sesjon != null){
+            sesjon.invalidate();
+        }
     }
 
     /**
@@ -33,8 +38,9 @@ public class LogginnService {
      * @param deltager Brukeren som skal logges inn
      */
     public static void loggInnBruker(HttpServletRequest request, Deltager deltager) {
-
-        //TODO - Skriv denne metoden.
+        loggUtBruker(request);
+        HttpSession sesjon = request.getSession();
+        sesjon.setAttribute("innloggetBruker", deltager);
     }
 
 
