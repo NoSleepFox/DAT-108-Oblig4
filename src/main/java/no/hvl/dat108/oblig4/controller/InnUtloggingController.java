@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class InnUtloggingController {
@@ -17,11 +18,11 @@ public class InnUtloggingController {
 	/*
 	 * GET /innlogging - Viser innloggingsskjemaet vhja logginn-viewet.
 	 */
-    //TODO - Annoteringen for å ta i mot requesten
-	public String henteSkjema() {
 
-        //TODO - Skriv innholdet i denne metoden.
-        return "";
+    // Annoteringen for å ta i mot requesten
+    @GetMapping("/innlogging")
+	public String henteSkjema() {
+        return "logginn";
 	}
 
 	/*
@@ -32,12 +33,26 @@ public class InnUtloggingController {
 	 * Hvis ugyldig brukernavn og/eller passord, skal det gjøres er redirect
 	 * til /innlogging med en feilmelding satt som en flash-attributt.
 	 */
-    //TODO - Annoteringen for å ta i mot requesten
+
+    // logg inn -> til deltagerliste
+    @PostMapping("/innlogging")
 	public String loggeInn(@RequestParam String mobil, @RequestParam String passord, 
 			HttpServletRequest request, RedirectAttributes ra) {
 
-        //TODO - Skriv innholdet i denne metoden.
-        return "";
+        Deltager deltager = DeltagerDbService.finnDeltagerMedMobil(mobil);
+
+        if (deltager != null && PassordService.erPassordKorrekt(
+                passord, deltager.getHashetPassord()
+        )) {
+            LogginnService.loggInnBruker(request, deltager);
+
+            return "redirect:/deltagerliste";
+        }
+
+        // feilmelding -> tilbake til innloggingsside
+        ra.addFlashAttribute("feilmelding", Feilmeldinger.UGYLDIG_BRUKERNAVN_PASSORD_MLD);
+
+        return "redirect:/innlogging";
 	}
 
 	/*
@@ -45,11 +60,16 @@ public class InnUtloggingController {
 	 * - Logger ut 
 	 * - Går (redirecter) til innlogging
 	 */
-    //TODO - Annoteringen for å ta i mot requesten
+
+    //Annoteringen for å ta i mot requesten
+    @PostMapping("/utlogging")
 	public String loggeUt(HttpServletRequest request, RedirectAttributes ra) {
 
-        //TODO - Skriv innholdet i denne metoden.
-        return "";
+        LogginnService.loggUtBruker(request);
+
+        ra.addFlashAttribute("feilmelding", Feilmeldinger.UTLOGGET_MLD);
+
+        return "redirect:/innlogging";
 	}
 
 }

@@ -22,8 +22,8 @@ public class DeltagerlisteController {
      * Hvis ikke bruker er innlogget, skal det gjøres er redirect til /innlogging
      * med en feilmelding satt som en flash-attributt.
 	 */
-    //TODO - Annoteringen for å ta i mot requesten
 
+    // Annoteringen for å ta i mot requesten
     @GetMapping("/deltagerliste")
     public String henteDeltagerliste(
             HttpServletRequest request, Model model,
