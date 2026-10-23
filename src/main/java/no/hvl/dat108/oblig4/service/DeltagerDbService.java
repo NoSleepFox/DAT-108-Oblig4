@@ -30,9 +30,9 @@ public class DeltagerDbService {
      * @return Alle deltagerne, sortert stigende på fullt navn.
      */
     public static List<Deltager> finnAlleSortertPaaFulltNavn() {
-
-        //TODO - Skriv denne metoden. Bruk streams!
-        return null;
+        return deltagerliste.stream()
+                .sorted(Deltager.paaFulltNavn)
+                .toList();
     }
 
     /**
