@@ -1,5 +1,7 @@
 package no.hvl.dat108.oblig4.controller;
 
+
+import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import no.hvl.dat108.oblig4.model.Deltager;
@@ -50,10 +52,10 @@ public class PaameldingController {
 		 */
 		String feilmelding = meldingFraInputValidering(skjema, bindingResult);
 
-		// if (feilmelding != null) {
-		// ra.addFlashAttribute("feilmelding", feilmelding);
-		// return "redirect:paamelding";
-		// }
+		if (feilmelding != null) {
+		 ra.addFlashAttribute("feilmelding", feilmelding);
+		 return "redirect:paamelding";
+		}
 
 		String hashetPassord = PassordService.lagHashetPassord(skjema.getPassord());
 
@@ -81,18 +83,22 @@ public class PaameldingController {
 	 */
 	// TODO - Annoteringen for å ta i mot requesten
 	@GetMapping("paameldt")
-	public String hentePaameldt(HttpServletRequest request, RedirectAttributes ra) {
+	public String hentePaameldt(HttpServletRequest request, RedirectAttributes ra, Model model) {
 
-		// Deltager deltager = (Deltager) ra.getAttribute("deltager");
-
-		// if (deltager == null) {
-		// ra.addFlashAttribute("feilmelding",
-		// "Du må være innlogget for å se denne siden.");
-		// return "redirect:innlogging";
-		// }
-
-		return "paameldingsbekreftelse";
+	if (!LogginnService.erBrukerLoggetInn(request)){
+		ra.addFlashAttribute("feilmelding", Feilmeldinger.KREVER_INNLOGGET_MLD);
+		return "redirect:innlogging";
 	}
+	model.addAttribute("deltager", request.getSession().getAttribute("innloggetBruker"));
+	return "paameldingsbekreftelse";
+		}
+	// Deltager deltager = (Deltager) ra.getAttribute("deltager");
+
+	// if (deltager == null) {
+	// ra.addFlashAttribute("feilmelding",
+	// "Du må være innlogget for å se denne siden.");
+	// return "redirect:innlogging";
+	// }
 
 	/*
 	 * Basic validering av feltene fornavn, etternavn, mobil, passord og kjonn
