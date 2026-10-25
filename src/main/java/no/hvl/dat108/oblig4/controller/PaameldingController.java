@@ -1,6 +1,5 @@
 package no.hvl.dat108.oblig4.controller;
 
-
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -23,11 +22,8 @@ public class PaameldingController {
 	/*
 	 * GET /paamelding - Viser påmeldingsskjema vhja av aktuelt view
 	 */
-	// TODO - Annoteringen for å ta i mot requesten
 	@GetMapping("paamelding")
 	public String henteSkjema() {
-
-		// TODO - Skriv innholdet i denne metoden.
 		return "paameldingsskjema";
 	}
 
@@ -38,7 +34,6 @@ public class PaameldingController {
 	 * - Logger inn
 	 * - Går (redirecter) til påmeldingsbekreftelse
 	 */
-	// TODO - Annoteringen for å ta i mot requesten
 	@PostMapping("paamelding")
 	public String meldePaa(HttpServletRequest request,
 			@Valid @ModelAttribute("deltager") DeltagerSkjema skjema,
@@ -53,18 +48,13 @@ public class PaameldingController {
 		String feilmelding = meldingFraInputValidering(skjema, bindingResult);
 
 		if (feilmelding != null) {
-		 ra.addFlashAttribute("feilmelding", feilmelding);
-		 return "redirect:paamelding";
+			ra.addFlashAttribute("feilmelding", feilmelding);
+			return "redirect:paamelding";
 		}
 
 		String hashetPassord = PassordService.lagHashetPassord(skjema.getPassord());
 
-		Deltager deltager = new Deltager(
-				skjema.getMobil(),
-				hashetPassord,
-				skjema.getFornavn(),
-				skjema.getEtternavn(),
-				skjema.getKjonn());
+		Deltager deltager = skjema.lagDeltager(hashetPassord);
 
 		DeltagerDbService.lagreDeltager(deltager);
 		LogginnService.loggInnBruker(request, deltager);
@@ -81,24 +71,16 @@ public class PaameldingController {
 	 * Hvis ikke bruker er innlogget, skal det gjøres er redirect til /innlogging
 	 * med en feilmelding satt som en flash-attributt.
 	 */
-	// TODO - Annoteringen for å ta i mot requesten
 	@GetMapping("paameldt")
 	public String hentePaameldt(HttpServletRequest request, RedirectAttributes ra, Model model) {
 
-	if (!LogginnService.erBrukerLoggetInn(request)){
-		ra.addFlashAttribute("feilmelding", Feilmeldinger.KREVER_INNLOGGET_MLD);
-		return "redirect:innlogging";
-	}
-	model.addAttribute("deltager", request.getSession().getAttribute("innloggetBruker"));
-	return "paameldingsbekreftelse";
+		if (!LogginnService.erBrukerLoggetInn(request)) {
+			ra.addFlashAttribute("feilmelding", Feilmeldinger.KREVER_INNLOGGET_MLD);
+			return "redirect:innlogging";
 		}
-	// Deltager deltager = (Deltager) ra.getAttribute("deltager");
-
-	// if (deltager == null) {
-	// ra.addFlashAttribute("feilmelding",
-	// "Du må være innlogget for å se denne siden.");
-	// return "redirect:innlogging";
-	// }
+		model.addAttribute("deltager", request.getSession().getAttribute("innloggetBruker"));
+		return "paameldingsbekreftelse";
+	}
 
 	/*
 	 * Basic validering av feltene fornavn, etternavn, mobil, passord og kjonn
